@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="350dp"
-    android:layout_height="550dp"
+    android:layout_height="500dp"
     android:layout_gravity="center"
-    android:background="?attr/panelBackground"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="25dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,98 +25,86 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/CommentDisplayTextView"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_margin="20dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:scrollY="40dp"
-        android:textColor="?attr/editTextColor"
-        android:textIsSelectable="true" />
-
     <EditText
-        android:id="@+id/CommentTitleEditText"
+        android:id="@+id/edtAddBookTitle"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="10dp"
-        android:hint="Add Your Title...."
+        android:layout_margin="10dp"
+        android:hint="Title"
         android:importantForAutofill="no"
         android:inputType="text"
-        android:textColor="?attr/editTextColor"
-        android:textColorHint="?attr/hintTextColor"
         android:textIsSelectable="true" />
 
     <EditText
-        android:id="@+id/CommentEditText"
+        android:id="@+id/edtAddBookAuthor"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:gravity="top|start"
-        android:hint="Add Your Comment...."
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:hint="Author"
         android:importantForAutofill="no"
-        android:inputType="textMultiLine"
-        android:lines="8"
-        android:maxLines="10"
-        android:minLines="6"
-        android:scrollY="40dp"
-        android:textColor="?attr/editTextColor"
-        android:textColorHint="?attr/hintTextColor"
+        android:inputType="text"
+        android:textIsSelectable="true" />
+
+    <EditText
+        android:id="@+id/edtAddBookISBN"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:hint="ISBN"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:textIsSelectable="true" />
+
+    <EditText
+        android:id="@+id/edtAddBookPrice"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:hint="Price"
+        android:importantForAutofill="no"
+        android:inputType="text"
         android:textIsSelectable="true" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="50dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="Link to book"
+            android:text="Category"
             android:textSize="15sp"
             android:textAlignment="center"
             android:textColor="?attr/colorAccent"/>
 
         <Spinner
-            android:id="@+id/CommentBookSpinner"
-            android:layout_width="210dp"
+            android:id="@+id/spnAddBookCategory"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_gravity="center"
             android:padding="10dp"
-            android:spinnerMode="dropdown"
-            app:layout_constraintBottom_toBottomOf="@+id/guidelineH2"
-            app:layout_constraintEnd_toEndOf="@+id/guidelineV5a"
-            app:layout_constraintStart_toStartOf="@+id/guidelineV5"
-            app:layout_constraintTop_toTopOf="@+id/guidelineH1" />
+            android:spinnerMode="dropdown"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="15dp"
         android:scrollX="0dp">
 
-        <ImageButton
-            android:id="@+id/CommentOKButton"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+        <Button
+            android:id="@+id/btnAddBookOK"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
             android:layout_margin="10dp"
-            android:background="@drawable/rounded_button_three"
-            android:contentDescription="@string/SpeakButtonContentDescription"
-            android:scaleType="fitXY"
-            android:tooltipText="Save Comment"
-            app:srcCompat="@drawable/ic_save" />
+            android:text="OK" />
 
     </LinearLayout>
 
