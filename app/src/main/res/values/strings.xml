@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Domestic Library</string>
+    <string-array name="category_list">
+        <item>Novel-Sinhala</item>
+        <item>Novel-Translation</item>
+        <item>Non-Fiction</item>
+        <item>Novel-Young</item>
+        <item>Other</item>
+    </string-array>
 </resources>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="350dp"
-    android:layout_height="500dp"
+    android:layout_height="550dp"
     android:layout_gravity="center"
     android:orientation="vertical"
     android:padding="25dp">
@@ -12,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -21,49 +21,61 @@
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:text="X"/>
+            android:text="X" />
 
     </LinearLayout>
 
     <EditText
         android:id="@+id/edtAddBookTitle"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
+        android:layout_height="55dp"
+        android:layout_margin="5dp"
         android:hint="Title"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:textIsSelectable="true" />
+        android:inputType="text" />
 
-    <EditText
-        android:id="@+id/edtAddBookAuthor"
+    <AutoCompleteTextView
+        android:id="@+id/actAddBookAuthor"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
+        android:layout_height="55dp"
+        android:layout_margin="5dp"
         android:hint="Author"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:textIsSelectable="true" />
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/edtAddBookISBN"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
+        android:layout_height="55dp"
+        android:layout_margin="5dp"
         android:hint="ISBN"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:textIsSelectable="true" />
+        android:inputType="number"
+        android:maxLength="13" />
 
-    <EditText
-        android:id="@+id/edtAddBookPrice"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:hint="Price"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:textIsSelectable="true" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/edtAddBookPrice"
+            android:layout_width="0dp"
+            android:layout_weight="0.55"
+            android:layout_height="55dp"
+            android:layout_marginEnd="10dp"
+            android:hint="Price(Rs.)"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/edtAddBookID"
+            android:layout_width="0dp"
+            android:layout_weight="0.35"
+            android:layout_height="55dp"
+            android:layout_marginStart="10dp"
+            android:hint="ID"
+            android:inputType="number" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -75,21 +87,21 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Category"
-            android:textSize="15sp"
             android:textAlignment="center"
-            android:textColor="?attr/colorAccent"/>
+            android:textSize="14sp" />
 
         <Spinner
             android:id="@+id/spnAddBookCategory"
-            android:layout_width="150dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:layout_gravity="center"
-            android:padding="10dp"
-            android:spinnerMode="dropdown"/>
+            android:layout_marginStart="10dp"
+            android:padding="5dp"
+            android:spinnerMode="dropdown" />
     </LinearLayout>
 
     <LinearLayout
@@ -103,7 +115,6 @@
             android:id="@+id/btnAddBookOK"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_margin="10dp"
             android:text="OK" />
 
     </LinearLayout>
