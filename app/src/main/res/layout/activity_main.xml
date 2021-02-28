@@ -8,61 +8,62 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineV1"
+        android:id="@+id/guidelineMainV1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.15" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineV2"
+        android:id="@+id/guidelineMainV2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85" />
 
     <Button
-        android:id="@+id/btnAddBook"
+        android:id="@+id/btnMainAddBook"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_margin="5dp"
-        app:layout_constraintStart_toStartOf="@id/guidelineV1"
-        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
+        app:layout_constraintStart_toStartOf="@id/guidelineMainV1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineMainV2"
         app:layout_constraintTop_toTopOf="parent"
         android:text="Add Book"
         />
 
-    <Button
-        android:id="@+id/btnAddAuthor"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_margin="5dp"
-        app:layout_constraintStart_toStartOf="@id/guidelineV1"
-        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
-        app:layout_constraintTop_toBottomOf="@id/btnAddBook"
-        android:text="Add Author"
-        />
 
     <Button
-        android:id="@+id/btnAddUser"
+        android:id="@+id/btnMainAddUser"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_margin="5dp"
-        app:layout_constraintStart_toStartOf="@id/guidelineV1"
-        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
-        app:layout_constraintTop_toBottomOf="@id/btnAddAuthor"
+        app:layout_constraintStart_toStartOf="@id/guidelineMainV1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineMainV2"
+        app:layout_constraintTop_toBottomOf="@id/btnMainAddBook"
         android:text="Add User"
         />
 
     <Button
-        android:id="@+id/btnAddReceipt"
+        android:id="@+id/btnMainAddReceipt"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_margin="5dp"
-        app:layout_constraintStart_toStartOf="@id/guidelineV1"
-        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
-        app:layout_constraintTop_toBottomOf="@id/btnAddUser"
+        app:layout_constraintStart_toStartOf="@id/guidelineMainV1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineMainV2"
+        app:layout_constraintTop_toBottomOf="@id/btnMainAddUser"
         android:text="Add Receipt"
+        />
+
+    <Button
+        android:id="@+id/btnMainDirectLibrary"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        app:layout_constraintStart_toStartOf="@id/guidelineMainV1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineMainV2"
+        app:layout_constraintTop_toBottomOf="@id/btnMainAddReceipt"
+        android:text="Go To Library"
         />
 
 
