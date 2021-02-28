@@ -22,11 +22,11 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private DataBaseHelper dbHelper;
-    private Button main_addBookButton, main_addReceiptButton, main_addUserButton, main_directLibraryButton, addBook_closeButton, addBook_okButton, addUser_closeButton, addUser_okButton, addReceipt_closeButton, addReceipt_addButton, addReceipt_okButton;
+    private Button main_addBookButton, main_addReceiptButton, main_addUserButton, main_directLibraryButton,main_directStorageButton, addBook_closeButton, addBook_okButton, addUser_closeButton, addUser_okButton, addReceipt_closeButton, addReceipt_addButton, addReceipt_okButton;
     private Dialog main_addBookPopup, main_addUserPopup, main_addReceiptPopup;
-    private EditText addBook_titleText, addBook_isbnText, addBook_priceText, addbook_idText, addUser_nameText, addUser_phoneText;
-    private AutoCompleteTextView addBook_authorView, addReceipt_userView, addReceipt_bookView, getAddReceipt_bookDuplicateView;
-    private LinearLayout addReceipt_addBookLayout, addReceipt_addBookItem;
+    private EditText addBook_titleText, addBook_isbnText, addBook_priceText, addBook_idText, addUser_nameText, addUser_phoneText;
+    private AutoCompleteTextView addBook_authorView, addReceipt_userView, addReceipt_bookView;
+    private LinearLayout addReceipt_addBookLayout;
     private Spinner addBook_categorySpinner;
     private ArrayList<String> authorsList, userList, bookList;
     private String TAG = "test";
@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         main_addReceiptButton.setOnClickListener(this::showAddReceiptPopup);
         main_directLibraryButton = findViewById(R.id.btnMainDirectLibrary);
         main_directLibraryButton.setOnClickListener(view -> loadLibrary());
+        main_directStorageButton = findViewById(R.id.btnMainDirectStorage);
+        main_directStorageButton.setOnClickListener(view -> loadStorage());
     }
 
     private void setupAddBookPopup() {
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         addBook_okButton = main_addBookPopup.findViewById(R.id.btnAddBookOK);
         addBook_priceText = main_addBookPopup.findViewById(R.id.edtAddBookPrice);
         addBook_titleText = main_addBookPopup.findViewById(R.id.edtAddBookTitle);
-        addbook_idText = main_addBookPopup.findViewById(R.id.edtAddBookID);
+        addBook_idText = main_addBookPopup.findViewById(R.id.edtAddBookID);
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.category_list));
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -142,39 +144,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addBookToDatabase() {
-        String id = addbook_idText.getText().toString();
+        String id = addBook_idText.getText().toString();
         String name = addBook_titleText.getText().toString().trim();
         String isbn = addBook_isbnText.getText().toString().trim();
         String price = addBook_priceText.getText().toString().trim();
         String author = addBook_authorView.getText().toString().trim();
         String category = addBook_categorySpinner.getSelectedItem().toString();
-        if (!name.equals("") && !author.equals("") && !id.equals("") && !isbn.equals("")) {
-            if (dbHelper.getBookIDByTitle(name) <= 0) {
-                boolean success = dbHelper.insertRowBook(Integer.parseInt(id), name, author, isbn, price, category);
-                if (success) {
-                    if (!authorsList.contains(author)) {
-                        authorsList.add(author);
-                        setAuthorAdapter();
-                    }
-                    if (!bookList.contains(name)) {
-                        bookList.add(name);
-                        setBookAdapter();
-                    }
-                    Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
 
-                    addbook_idText.setText("");
-                    addBook_authorView.setText("");
-                    addBook_isbnText.setText("");
-                    addBook_titleText.setText("");
-                    addBook_priceText.setText("");
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), "Error - Book is already in the database", Toast.LENGTH_SHORT).show();
-            }
-        } else {
+        if (name.equals("") || author.equals("") || id.equals("") || isbn.equals("")) {
             Toast.makeText(getApplicationContext(), "Error - All fields should be filled", Toast.LENGTH_SHORT).show();
+        } else if (dbHelper.getBookIDByTitle(name) > 0) {
+            Toast.makeText(getApplicationContext(), "Error - Book is already in the database", Toast.LENGTH_SHORT).show();
+        } else {
+            boolean success = dbHelper.insertRowBook(Integer.parseInt(id), name, author, isbn, price, category);
+            if (success) {
+                if (!authorsList.contains(author)) {
+                    authorsList.add(author);
+                    setAuthorAdapter();
+                }
+                if (!bookList.contains(name)) {
+                    bookList.add(name);
+                    setBookAdapter();
+                }
+                Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
+
+                addBook_idText.setText("");
+                addBook_authorView.setText("");
+                addBook_isbnText.setText("");
+                addBook_titleText.setText("");
+                addBook_priceText.setText("");
+            } else {
+                Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -183,28 +184,31 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void loadStorage() {
+        Intent intent = new Intent(this, StorageActivity.class);
+        startActivity(intent);
+    }
+
     private void addUserToDatabase() {
         String name = addUser_nameText.getText().toString().trim();
         String phone = addUser_phoneText.getText().toString().trim();
-        if (!name.equals("")) {
-            if (dbHelper.getUserIDByName(name) <= 0) {
-                boolean success = dbHelper.insertRowUser(name, phone);
-                if (success) {
-                    if (!userList.contains(name)) {
-                        userList.add(name);
-                        setUserAdapter();
-                    }
-                    addUser_phoneText.setText("");
-                    addUser_nameText.setText("");
-                    Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), "Error - User is already in the database", Toast.LENGTH_SHORT).show();
-            }
-        } else {
+        if (name.equals("")) {
             Toast.makeText(getApplicationContext(), "Error - All fields should be filled", Toast.LENGTH_SHORT).show();
+        } else if (dbHelper.getUserIDByName(name) > 0) {
+            Toast.makeText(getApplicationContext(), "Error - User is already in the database", Toast.LENGTH_SHORT).show();
+        } else {
+            boolean success = dbHelper.insertRowUser(name, phone);
+            if (success) {
+                if (!userList.contains(name)) {
+                    userList.add(name);
+                    setUserAdapter();
+                }
+                addUser_phoneText.setText("");
+                addUser_nameText.setText("");
+                Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -219,7 +223,9 @@ public class MainActivity extends AppCompatActivity {
             books.add(tv.getText().toString().trim());
         }
         int userID = dbHelper.getUserIDByName(user);
-        if (userID > 0) {
+        if (userID <= 0) {
+            Toast.makeText(getApplicationContext(), "Error - User is not in the database", Toast.LENGTH_SHORT).show();
+        } else {
             for (String title : books) {
                 int ID = dbHelper.getBookIDByTitle(title);
                 if (ID <= 0) {
@@ -227,7 +233,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "addReceiptToDatabase: " + ID + " " + userID);
                     boolean success = dbHelper.insertRowReceipt(ID, userID, 4345);
-                    if (success) {
+                    boolean success2 = dbHelper.updateBookAvailability(ID,false);
+                    if (success && success2) {
                         addReceipt_userView.setText("");
                         addReceipt_bookView.setText("");
                         for (int i = 0; i < addReceipt_addBookLayout.getChildCount(); i++) {
@@ -241,8 +248,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        } else {
-            Toast.makeText(getApplicationContext(), "Error - User is not in the database", Toast.LENGTH_SHORT).show();
         }
     }
 

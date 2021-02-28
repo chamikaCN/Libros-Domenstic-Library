@@ -18,21 +18,21 @@
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/txvBookCardID"
-            android:layout_width="wrap_content"
+            android:id="@+id/txvUserCardName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAlignment="viewEnd"
-            android:layout_marginEnd="7dp"
-            android:textColor="@color/colorAccent"
-            android:textSize="20sp"
+            android:layout_weight="0.6"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txvBookCardTile"
-            android:layout_width="match_parent"
+            android:id="@+id/txvUserCardTelephone"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_weight="0.4"
+            android:textSize="15dp"
+            android:textAlignment="viewEnd"
+            android:textStyle="italic" />
 
 
     </LinearLayout>
@@ -44,20 +44,21 @@
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/txvBookCardAuthor"
+            android:id="@+id/txvUserCardBooks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.55"
-            android:textSize="15sp"
-            android:textStyle="italic" />
+            android:textSize="12sp"
+             />
 
         <TextView
-            android:id="@+id/txvBookCardBorrower"
+            android:id="@+id/txvUserCardDates"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.4"
             android:textAlignment="viewEnd"
-            android:textSize="15sp" />
+            android:textStyle="italic"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

@@ -53,6 +53,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public boolean updateBookAvailability(int id, boolean available){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        if(available){
+            cv.put("Availability", 1);
+        }else{
+            cv.put("Availability", 0);
+        }
+        long result = db.update(TABLE_BOOK,cv,"BookID = ?", new String[]{String.valueOf(id)});
+        return result != -1;
+    }
+
     public boolean insertRowUser(String name, String telephone) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -106,6 +118,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return books;
     }
 
+    public ArrayList<String[]> getBorrowedBooksByUserID(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_RECEIPT, new String[]{"BookID","TimeStamp"}, "UserID = ?", new String[]{String.valueOf(id)}, null, null, "TimeStamp", null);
+        ArrayList<String[]> borrowedBooks = new ArrayList<>();
+        while (res.moveToNext()) {
+            String a = res.getString(0);
+            String b = res.getString(1);
+            borrowedBooks.add(new String[]{a, b});
+        }
+        res.close();
+        return borrowedBooks;
+    }
+
     public ArrayList<String> getAllUsers() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.query(true, TABLE_USER, new String[]{"Name"}, null, null, "Name", null, "TimeStamp", null);
@@ -120,20 +145,53 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<String[]> getAllBookDetails() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.query(true, TABLE_BOOK, new String[]{"Title", "Author"}, null, null, null, null, "TimeStamp DESC", "20");
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "Availability"}, null, null, null, null, "TimeStamp DESC", "20");
         ArrayList<String[]> booksAuthors = new ArrayList<>();
         while (res.moveToNext()) {
             String a = res.getString(0);
             String b = res.getString(1);
-            booksAuthors.add(new String[]{a, b});
+            String c = res.getString(2);
+            String d = res.getString(3);
+            booksAuthors.add(new String[]{a, b, c, d});
         }
         res.close();
         return booksAuthors;
     }
 
+    public ArrayList<String[]> getAllUserDetails() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_USER, new String[]{"UserID","Name","Telephone"}, null, null, null, null, "TimeStamp DESC", "30");
+        ArrayList<String[]> users = new ArrayList<>();
+        while (res.moveToNext()) {
+            String a = res.getString(0);
+            String b = res.getString(1);
+            String c = res.getString(2);
+            users.add(new String[]{a, b, c});
+        }
+        res.close();
+        return users;
+    }
+
+    public String getBorrowedUserByBookID(int bookID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor resReceipt = db.query(true, TABLE_RECEIPT, new String[]{"UserID"}, "BookID = ?", new String[]{String.valueOf(bookID)}, null, null, "TimeStamp DESC", "1");
+        int userID = 0;
+        while (resReceipt.moveToNext()) {
+            userID = resReceipt.getInt(0);
+        }
+        resReceipt.close();
+        Cursor resUser = db.query(true, TABLE_USER, new String[]{"Name"}, "UserID = ?", new String[]{String.valueOf(userID)}, null, null, "TimeStamp DESC", "1");
+        String userName = "Not Available";
+        while (resUser.moveToNext()) {
+            userName = resUser.getString(0);
+        }
+        resUser.close();
+        return userName;
+    }
+
     public int getUserIDByName(String user) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.query(true, TABLE_USER, new String[]{"UserID"}, "Name = ?", new String[]{user}, null, null, null , null);
+        Cursor res = db.query(true, TABLE_USER, new String[]{"UserID"}, "Name = ?", new String[]{user}, null, null, null, null);
         int id = 0;
         while (res.moveToNext()) {
             id = res.getInt(0);
@@ -144,7 +202,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public int getBookIDByTitle(String title) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID"}, "Title = ?", new String[]{title}, null, null, null , null);
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID"}, "Title = ?", new String[]{title}, null, null, null, null);
         int id = 0;
         while (res.moveToNext()) {
             id = res.getInt(0);
@@ -153,24 +211,62 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public String getBookTitleByID(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"Title"}, "BookID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+        String book = "Error";
+        while (res.moveToNext()) {
+            book = res.getString(0);
+        }
+        res.close();
+        return book;
+    }
+
     public ArrayList<String[]> getSimilarBookDetails(String searchInput) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor resTitle = db.query(true, TABLE_BOOK, new String[]{"Title", "Author"}, "Title" + " LIKE ?", new String[]{"%" + searchInput + "%"}, null, null, "TimeStamp", null);
-        Cursor resAuthor = db.query(true, TABLE_BOOK, new String[]{"Title", "Author"}, "Author" + " LIKE ?", new String[]{"%" + searchInput + "%"}, null, null, "TimeStamp", null);
+        Cursor resTitle = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "Availability"}, "Title" + " LIKE ?", new String[]{"%" + searchInput + "%"}, null, null, "TimeStamp DESC", null);
+        Cursor resAuthor = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "Availability"}, "Author" + " LIKE ?", new String[]{"%" + searchInput + "%"}, null, null, "TimeStamp DESC", null);
+        Cursor resID = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "Availability"}, "BookID" + " LIKE ?", new String[]{"%" + searchInput + "%"}, null, null, "TimeStamp DESC", null);
         ArrayList<String[]> details = new ArrayList<>();
         while (resTitle.moveToNext()) {
             String a = resTitle.getString(0);
             String b = resTitle.getString(1);
-            details.add(new String[]{a, b});
+            String c = resTitle.getString(2);
+            String d = resTitle.getString(3);
+            details.add(new String[]{a, b, c, d});
         }
         resTitle.close();
         while (resAuthor.moveToNext()) {
             String a = resAuthor.getString(0);
             String b = resAuthor.getString(1);
-            details.add(new String[]{a, b});
+            String c = resAuthor.getString(2);
+            String d = resAuthor.getString(3);
+            details.add(new String[]{a, b, c, d});
         }
         resAuthor.close();
+        while (resID.moveToNext()) {
+            String a = resID.getString(0);
+            String b = resID.getString(1);
+            String c = resID.getString(2);
+            String d = resID.getString(3);
+            details.add(new String[]{a, b, c, d});
+        }
+        resID.close();
         return details;
+    }
+
+    public ArrayList<String[]> getSimilarUserDetails(String searchInput) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_USER, new String[]{"UserID","Name","Telephone"}, "Name"+" LIKE ?", new String[]{"%" + searchInput + "%"}, null, null, "TimeStamp DESC", null);
+        ArrayList<String[]> users = new ArrayList<>();
+        while (res.moveToNext()) {
+            String a = res.getString(0);
+            String b = res.getString(1);
+            String c = res.getString(2);
+            users.add(new String[]{a, b, c});
+        }
+        res.close();
+        return users;
     }
 
     //===============================================================================================================================

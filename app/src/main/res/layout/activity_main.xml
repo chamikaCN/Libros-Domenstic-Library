@@ -66,5 +66,16 @@
         android:text="Go To Library"
         />
 
+    <Button
+        android:id="@+id/btnMainDirectStorage"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        app:layout_constraintStart_toStartOf="@id/guidelineMainV1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineMainV2"
+        app:layout_constraintTop_toBottomOf="@id/btnMainDirectLibrary"
+        android:text="Go To Storage"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

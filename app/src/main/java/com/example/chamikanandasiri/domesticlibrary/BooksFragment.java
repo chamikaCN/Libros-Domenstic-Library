@@ -1,18 +1,23 @@
 package com.example.chamikanandasiri.domesticlibrary;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-public class LibraryActivity extends AppCompatActivity {
+public class BooksFragment extends Fragment {
 
     DataBaseHelper dataBaseHelper;
+    View view;
     ListView Library_listView;
     EditText Library_searchText;
     Button Library_searchButton;
@@ -20,17 +25,22 @@ public class LibraryActivity extends AppCompatActivity {
 
     private String TAG = "Test";
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_library);
-
-        dataBaseHelper = new DataBaseHelper(this);
-        Library_listView = findViewById(R.id.lstLibraryBooks);
-        Library_searchText = findViewById(R.id.edtLibrarySearch);
-        Library_searchButton = findViewById(R.id.btnLibrarySearch);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view =  inflater.inflate(R.layout.fragment_books,container,false);
+        Library_listView = view.findViewById(R.id.lstLibraryBooks);
+        Library_searchText = view.findViewById(R.id.edtLibrarySearch);
+        Library_searchButton = view.findViewById(R.id.btnLibrarySearch);
         Library_searchButton.setOnClickListener(this::SearchTitle);
         LoadAllBooks();
+        return  view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dataBaseHelper = new DataBaseHelper(getActivity());
     }
 
     public void SearchTitle(View v1) {
@@ -50,15 +60,9 @@ public class LibraryActivity extends AppCompatActivity {
 
 
     private void bookListGenerate() {
-        BookArrayAdapter adapter = new BookArrayAdapter(this, R.layout.listitem_book, bookDetails,dataBaseHelper);
+        BookArrayAdapter adapter = new BookArrayAdapter(getActivity(), R.layout.listitem_book, bookDetails,dataBaseHelper);
         Library_listView.setAdapter(adapter);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
 
 }
-
