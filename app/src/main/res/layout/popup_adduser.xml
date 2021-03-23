@@ -42,6 +42,7 @@
         android:layout_margin="10dp"
         android:hint="Telephone Number"
         android:importantForAutofill="no"
+        android:maxLength="10"
         android:inputType="phone"
         android:textIsSelectable="true" />
 

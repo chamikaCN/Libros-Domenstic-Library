@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CardViewRadius">
+        <item name="cardBackgroundColor">@color/colorPrimaryLight50</item>
+        <item name="cardCornerRadius">25dp</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

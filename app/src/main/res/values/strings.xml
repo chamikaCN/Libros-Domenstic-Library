@@ -7,7 +7,6 @@
         <item>Novel-Young</item>
         <item>Other</item>
     </string-array>
-    <string name="title_activity_storage">StorageActivity</string>
     <string name="tab_text_1">Books</string>
     <string name="tab_text_2">Users</string>
 </resources>

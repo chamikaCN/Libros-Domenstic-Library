@@ -11,15 +11,12 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minHeight="?actionBarSize"
-            android:padding="@dimen/appbar_padding"
-            android:text="@string/app_name"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
@@ -33,5 +30,64 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="5dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="25dp">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAddUser"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimaryLight200"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:focusable="true"
+                android:scaleType="fitXY"
+                app:fabCustomSize="60dp"
+                app:maxImageSize="30dp"
+                app:srcCompat="@drawable/ic_add_user" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAddBook"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimaryLight200"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:focusable="true"
+                android:scaleType="fitXY"
+                app:fabCustomSize="60dp"
+                app:maxImageSize="30dp"
+                app:srcCompat="@drawable/ic_add" />
+        </FrameLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddReceipt"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="fitXY"
+            app:fabCustomSize="75dp"
+            app:maxImageSize="35dp"
+            app:srcCompat="@drawable/ic_add_receipt" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

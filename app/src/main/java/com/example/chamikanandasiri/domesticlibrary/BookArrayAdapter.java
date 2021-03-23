@@ -10,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import androidx.cardview.widget.CardView;
+
 class BookArrayAdapter extends ArrayAdapter<String[]> {
     private Context context;
     private int resource;
@@ -31,14 +33,15 @@ class BookArrayAdapter extends ArrayAdapter<String[]> {
         String author = Objects.requireNonNull(getItem(position))[2];
         String availability = Objects.requireNonNull(getItem(position))[3];
 
-        if(availability.equals("1")){
+        if (availability.equals("1")) {
             availability = "Available";
-        }else if(availability.equals("0")){
+        } else if (availability.equals("0")) {
             availability = dataBaseHelper.getBorrowedUserByBookID(Integer.parseInt(id));
         }
 
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(resource, parent, false);
+
 
         TextView txvName = convertView.findViewById(R.id.txvBookCardTile);
         TextView txvAuthor = convertView.findViewById(R.id.txvBookCardAuthor);

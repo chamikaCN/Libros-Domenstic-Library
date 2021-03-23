@@ -2,10 +2,6 @@ package com.example.chamikanandasiri.domesticlibrary;
 
 import android.content.Context;
 
-import com.example.chamikanandasiri.domesticlibrary.BooksFragment;
-import com.example.chamikanandasiri.domesticlibrary.R;
-import com.example.chamikanandasiri.domesticlibrary.UsersFragment;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;

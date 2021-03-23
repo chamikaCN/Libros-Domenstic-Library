@@ -2,18 +2,96 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StorageActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.03" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.94" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.96" />
+
     <LinearLayout
         android:id="@+id/layoutLibrary"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="110dp"
         android:gravity="center"
         android:paddingStart="20dp"
+        android:paddingTop="15dp"
         android:paddingEnd="20dp"
+        android:paddingBottom="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
@@ -21,27 +99,39 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:inputType="text"
+            android:layout_weight="0.95"
             android:hint="Search Here.."
-            android:layout_weight="0.95"/>
+            android:inputType="text" />
 
-        <Button
+        <ImageButton
+            android:id="@+id/btnLibraryReset"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            android:background="@color/colorPrimaryLight200"
+            android:src="@drawable/ic_close" />
+
+        <ImageButton
             android:id="@+id/btnLibrarySearch"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_margin="10dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="@color/colorPrimaryLight200"
+            android:src="@drawable/ic_search" />
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lstLibraryBooks"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/layoutLibrary"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="15dp"
-        android:padding="15dp">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBook"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipChildren="true"
+        android:clipToPadding="true"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineH5"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineV6"
+        app:layout_constraintStart_toEndOf="@+id/guidelineV1"
+        app:layout_constraintTop_toBottomOf="@+id/layoutLibrary"/>
 
-    </ListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
