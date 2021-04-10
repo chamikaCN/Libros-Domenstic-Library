@@ -38,11 +38,11 @@ public class BookViewAdapter extends RecyclerView.Adapter<BookViewAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String bookID = bookDetails.get(position)[0];
-        holder.bookIDView.setText(bookID);
-        holder.bookTitleView.setText(bookDetails.get(position)[1]);
-        holder.bookAuthorView.setText(bookDetails.get(position)[2]);
+        holder.bookCodeView.setText(bookDetails.get(position)[1]);
+        holder.bookTitleView.setText(bookDetails.get(position)[2]);
+        holder.bookAuthorView.setText(bookDetails.get(position)[3]);
 
-        String availability = bookDetails.get(position)[3];
+        String availability = bookDetails.get(position)[4];
         holder.bookAvailableView.setText(availability.equals("1") ?"Available":dataBaseHelper.getBorrowedUserByBookID(Integer.parseInt(bookID)));
         holder.bookCardView.setOnClickListener(view -> ((StorageActivity)context).showViewBookPopup(Integer.parseInt(bookID)));
 
@@ -55,13 +55,13 @@ public class BookViewAdapter extends RecyclerView.Adapter<BookViewAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView bookIDView, bookTitleView, bookAuthorView, bookAvailableView;
+        TextView bookCodeView, bookTitleView, bookAuthorView, bookAvailableView;
         CardView bookCardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             bookCardView = itemView.findViewById(R.id.crdBookCard);
-            bookIDView = itemView.findViewById(R.id.txvBookCardID);
+            bookCodeView = itemView.findViewById(R.id.txvBookCardID);
             bookTitleView = itemView.findViewById(R.id.txvBookCardTitle);
             bookAuthorView = itemView.findViewById(R.id.txvBookCardAuthor);
             bookAvailableView = itemView.findViewById(R.id.txvBookCardAvailable);

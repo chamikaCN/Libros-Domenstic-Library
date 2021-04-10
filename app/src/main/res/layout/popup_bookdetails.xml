@@ -23,8 +23,8 @@
 
             <ImageButton
                 android:id="@+id/btnBookDetailsClose"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@color/colorError"
                 android:src="@drawable/ic_close_light" />
 
@@ -94,13 +94,13 @@
                     android:inputType="numberDecimal" />
 
                 <EditText
-                    android:id="@+id/edtBookDetailsID"
+                    android:id="@+id/edtBookDetailsCode"
                     android:layout_width="0dp"
                     android:layout_height="55dp"
                     android:layout_marginStart="10dp"
                     android:layout_weight="0.35"
-                    android:maxLength="5"
-                    android:hint="ID"
+                    android:maxLength="4"
+                    android:hint="Code"
                     android:inputType="number" />
             </LinearLayout>
 
@@ -155,9 +155,12 @@
             android:id="@+id/cloBookDetailsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="5dp"
             android:padding="10dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/lloBookDetails4"
@@ -180,11 +183,11 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txvBookDetailsID"
+                    android:id="@+id/txvBookDetailsCode"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
-                    android:text="ID"
+                    android:text="Code"
                     android:textAlignment="viewEnd"
                     android:textColor="@color/colorAccentDark"
                     android:textSize="22sp"
@@ -260,11 +263,20 @@
                 android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@id/txvBookDetailsAvailability">
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnBookDetailsEdit"
-                    android:layout_width="100dp"
+                    android:background="@color/colorPrimaryLight200"
+                    android:layout_width="40dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_height="40dp"
-                    android:text="Edit" />
+                    android:src="@drawable/ic_edit"/>
+                <ImageButton
+                    android:id="@+id/btnBookDetailsDelete"
+                    android:background="@color/colorError"
+                    android:layout_width="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_delete"/>
 
             </LinearLayout>
 

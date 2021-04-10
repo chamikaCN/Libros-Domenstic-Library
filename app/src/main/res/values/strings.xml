@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Domestic Library</string>
+    <string name="app_name">Libros</string>
     <string-array name="category_list">
         <item>Novel-Sinhala</item>
         <item>Novel-Translation</item>

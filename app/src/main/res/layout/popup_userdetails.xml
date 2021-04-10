@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewRadius"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:elevation="0dp"
+    tools:context=".StorageActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnUserDetailsClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@color/colorError"
+                android:src="@drawable/ic_close_light" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cloUserDetailsEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/edtUserDetailsName"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_margin="10dp"
+                android:hint="Name"
+                android:inputType="text"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/edtUserDetailsTelephone"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_margin="10dp"
+                android:hint="Telephone Number"
+                android:inputType="phone"
+                android:maxLength="10"
+                app:layout_constraintTop_toBottomOf="@id/edtUserDetailsName" />
+
+            <LinearLayout
+                android:id="@+id/lloUserDetails1"
+                app:layout_constraintTop_toBottomOf="@id/edtUserDetailsTelephone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="15dp"
+                android:scrollX="0dp">
+
+                <Button
+                    android:id="@+id/btnUserDetailsOK"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:text="OK" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cloUserDetailsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:padding="10dp"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/lloUserDetails3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txvUserDetailsName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="0.7"
+                    android:text="Name"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txvUserDetailsCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="Count"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorAccentDark"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txvUserDetailsTelephone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Telephone"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@id/lloUserDetails3"
+                app:layout_constraintTop_toBottomOf="@id/lloUserDetails3" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/lstUserDetailsComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:clipToPadding="true"
+                android:clipChildren="true"
+                app:layout_constraintTop_toBottomOf="@id/txvUserDetailsTelephone"/>
+
+            <LinearLayout
+                android:id="@+id/lloUserDetails4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/lstUserDetailsComplete">
+
+                <ImageButton
+                    android:id="@+id/btnUserDetailsEdit"
+                    android:background="@color/colorPrimaryLight200"
+                    android:layout_width="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_edit"/>
+                <ImageButton
+                    android:id="@+id/btnUserDetailsDelete"
+                    android:background="@color/colorError"
+                    android:layout_width="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_delete"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -30,27 +30,32 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 public class StorageActivity extends AppCompatActivity {
 
     private DataBaseHelper dbHelper;
-    private TextView viewBook_titleView, viewBook_authorView, viewBook_idView, viewBook_isbnView, viewBook_categoryView, viewBook_priceView, viewBook_availabilityView;
-    private ConstraintLayout bookDetails_ViewLayout, bookDetails_EditLayout;
+    private TextView viewBook_titleView, viewBook_authorView, viewBook_codeView, viewBook_isbnView, viewBook_categoryView, viewBook_priceView, viewBook_availabilityView, viewUser_nameView, viewUser_telephoneView, viewUser_countView;
+    private ConstraintLayout bookDetails_ViewLayout, bookDetails_EditLayout, userDetails_ViewLayout, userDetails_EditLayout;
     private FloatingActionButton addBook_fab, addUser_fab, addReceipt_fab;
-    private Button addBook_okButton, addUser_closeButton, addUser_okButton, addReceipt_closeButton, addReceipt_addButton, addReceipt_okButton;
-    private ImageButton addBook_closeButton;
-    private Dialog main_addBookPopup, main_addUserPopup, main_addReceiptPopup;
-    private EditText addBook_titleText, addBook_isbnText, addBook_priceText, addBook_idText, addUser_nameText, addUser_phoneText;
+    private Button addBook_okButton, addUser_okButton, addReceipt_closeButton, addReceipt_addButton, addReceipt_okButton;
+    private ImageButton addBook_closeButton, addUser_closeButton, viewBook_editButton, viewBook_deleteButton, viewUser_editButton, viewUser_deleteButton;
+    private Dialog main_bookDetailsPopup, main_userDetailsPopup, main_addReceiptPopup;
+    private EditText addBook_titleText, addBook_isbnText, addBook_priceText, addBook_codeText, addUser_nameText, addUser_phoneText;
     private AutoCompleteTextView addBook_authorView, addReceipt_userView, addReceipt_bookView;
     private LinearLayout addReceipt_addBookLayout;
     private Spinner addBook_categorySpinner;
+    private RecyclerView viewUser_bookList;
     private ArrayList<String> authorsList, userList, bookList;
+    private ArrayAdapter<String> categoryAdapter;
     private int currentTab = 0;
     private boolean fabVisible = true;
     private String TAG = "test";
     private UsersFragment usersFragment;
     private BooksFragment booksFragment;
+    private AcceptBookViewAdapter acceptAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +76,12 @@ public class StorageActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-        main_addBookPopup = new Dialog(this);
-        main_addBookPopup.setContentView(R.layout.popup_bookdetails);
-        Objects.requireNonNull(main_addBookPopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
-        main_addUserPopup = new Dialog(this);
-        main_addUserPopup.setContentView(R.layout.popup_adduser);
+        main_bookDetailsPopup = new Dialog(this);
+        main_bookDetailsPopup.setContentView(R.layout.popup_bookdetails);
+        Objects.requireNonNull(main_bookDetailsPopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
+        main_userDetailsPopup = new Dialog(this);
+        main_userDetailsPopup.setContentView(R.layout.popup_userdetails);
+        Objects.requireNonNull(main_userDetailsPopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
         main_addReceiptPopup = new Dialog(this);
         main_addReceiptPopup.setContentView(R.layout.popup_addreceipt);
 
@@ -117,24 +123,26 @@ public class StorageActivity extends AppCompatActivity {
     }
 
     private void setupAddBookPopup() {
-        bookDetails_EditLayout = main_addBookPopup.findViewById(R.id.cloBookDetailsEdit);
-        bookDetails_ViewLayout = main_addBookPopup.findViewById(R.id.cloBookDetailsView);
-        addBook_authorView = main_addBookPopup.findViewById(R.id.actBookDetailsAuthor);
-        addBook_categorySpinner = main_addBookPopup.findViewById(R.id.spnBookDetailsCategory);
-        addBook_closeButton = main_addBookPopup.findViewById(R.id.btnBookDetailsClose);
-        addBook_isbnText = main_addBookPopup.findViewById(R.id.edtBookDetailsISBN);
-        addBook_okButton = main_addBookPopup.findViewById(R.id.btnBookDetailsOK);
-        addBook_priceText = main_addBookPopup.findViewById(R.id.edtBookDetailsPrice);
-        addBook_titleText = main_addBookPopup.findViewById(R.id.edtBookDetailsTitle);
-        addBook_idText = main_addBookPopup.findViewById(R.id.edtBookDetailsID);
-        viewBook_authorView =  main_addBookPopup.findViewById(R.id.txvBookDetailsAuthor);
-        viewBook_categoryView = main_addBookPopup.findViewById(R.id.txvBookDetailsCategory);
-        viewBook_idView = main_addBookPopup.findViewById(R.id.txvBookDetailsID);
-        viewBook_isbnView = main_addBookPopup.findViewById(R.id.txvBookDetailsISBN);
-        viewBook_priceView = main_addBookPopup.findViewById(R.id.txvBookDetailsPrice);
-        viewBook_titleView = main_addBookPopup.findViewById(R.id.txvBookDetailsTitle);
-        viewBook_availabilityView = main_addBookPopup.findViewById(R.id.txvBookDetailsAvailability);
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
+        bookDetails_EditLayout = main_bookDetailsPopup.findViewById(R.id.cloBookDetailsEdit);
+        bookDetails_ViewLayout = main_bookDetailsPopup.findViewById(R.id.cloBookDetailsView);
+        addBook_authorView = main_bookDetailsPopup.findViewById(R.id.actBookDetailsAuthor);
+        addBook_categorySpinner = main_bookDetailsPopup.findViewById(R.id.spnBookDetailsCategory);
+        addBook_closeButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsClose);
+        addBook_isbnText = main_bookDetailsPopup.findViewById(R.id.edtBookDetailsISBN);
+        addBook_okButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsOK);
+        addBook_priceText = main_bookDetailsPopup.findViewById(R.id.edtBookDetailsPrice);
+        addBook_titleText = main_bookDetailsPopup.findViewById(R.id.edtBookDetailsTitle);
+        addBook_codeText = main_bookDetailsPopup.findViewById(R.id.edtBookDetailsCode);
+        viewBook_authorView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsAuthor);
+        viewBook_categoryView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsCategory);
+        viewBook_codeView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsCode);
+        viewBook_isbnView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsISBN);
+        viewBook_priceView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsPrice);
+        viewBook_titleView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsTitle);
+        viewBook_availabilityView = main_bookDetailsPopup.findViewById(R.id.txvBookDetailsAvailability);
+        viewBook_editButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsEdit);
+        viewBook_deleteButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsDelete);
+        categoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.category_list));
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         addBook_categorySpinner.setAdapter(categoryAdapter);
@@ -142,10 +150,18 @@ public class StorageActivity extends AppCompatActivity {
     }
 
     private void setupAddUserPopup() {
-        addUser_closeButton = main_addUserPopup.findViewById(R.id.btnAddUserClose);
-        addUser_okButton = main_addUserPopup.findViewById(R.id.btnAddUserOK);
-        addUser_nameText = main_addUserPopup.findViewById(R.id.edtAddUserName);
-        addUser_phoneText = main_addUserPopup.findViewById(R.id.edtAddUserTelephone);
+        userDetails_EditLayout = main_userDetailsPopup.findViewById(R.id.cloUserDetailsEdit);
+        userDetails_ViewLayout = main_userDetailsPopup.findViewById(R.id.cloUserDetailsView);
+        viewUser_nameView = main_userDetailsPopup.findViewById(R.id.txvUserDetailsName);
+        viewUser_telephoneView = main_userDetailsPopup.findViewById(R.id.txvUserDetailsTelephone);
+        viewUser_countView = main_userDetailsPopup.findViewById(R.id.txvUserDetailsCount);
+        addUser_closeButton = main_userDetailsPopup.findViewById(R.id.btnUserDetailsClose);
+        addUser_okButton = main_userDetailsPopup.findViewById(R.id.btnUserDetailsOK);
+        addUser_nameText = main_userDetailsPopup.findViewById(R.id.edtUserDetailsName);
+        addUser_phoneText = main_userDetailsPopup.findViewById(R.id.edtUserDetailsTelephone);
+        viewUser_editButton = main_userDetailsPopup.findViewById(R.id.btnUserDetailsEdit);
+        viewUser_deleteButton = main_userDetailsPopup.findViewById(R.id.btnUserDetailsDelete);
+        viewUser_bookList = main_userDetailsPopup.findViewById(R.id.lstUserDetailsComplete);
     }
 
     private void setupAddReceiptPopup() {
@@ -178,35 +194,118 @@ public class StorageActivity extends AppCompatActivity {
     }
 
     public void showAddBookPopup() {
-        addBook_closeButton.setOnClickListener(v2 -> main_addBookPopup.dismiss());
+        addBook_closeButton.setOnClickListener(v2 -> {
+            addBook_codeText.setText("");
+            addBook_authorView.setText("");
+            addBook_isbnText.setText("");
+            addBook_titleText.setText("");
+            addBook_priceText.setText("");
+            main_bookDetailsPopup.dismiss();
+        });
         addBook_okButton.setOnClickListener(v2 -> addBookToDatabase());
         bookDetails_ViewLayout.setVisibility(View.GONE);
         bookDetails_EditLayout.setVisibility(View.VISIBLE);
-        main_addBookPopup.show();
+        main_bookDetailsPopup.show();
     }
 
-    public void showAddUserPopup() {
-        addUser_closeButton.setOnClickListener(v2 -> main_addUserPopup.dismiss());
-        addUser_okButton.setOnClickListener(v2 -> addUserToDatabase());
-        main_addUserPopup.show();
-    }
-
-    public void showViewBookPopup(int bookID){
-        addBook_closeButton.setOnClickListener(v2 -> main_addBookPopup.dismiss());
+    public void showViewBookPopup(int bookID) {
+        addBook_closeButton.setOnClickListener(v2 -> main_bookDetailsPopup.dismiss());
         String[] bookDetails = dbHelper.getBookDetailsByID(bookID);
-        viewBook_idView.setText(bookDetails[0]);
+        viewBook_editButton.setOnClickListener(v2 -> showEditBookPopup(bookID, bookDetails));
+        viewBook_deleteButton.setOnClickListener(v2 -> {
+            dbHelper.deleteBookEntry(bookID);
+            main_bookDetailsPopup.dismiss();
+            updateTabs();
+        });
+        viewBook_codeView.setText(bookDetails[0]);
         viewBook_titleView.setText(bookDetails[1]);
         viewBook_authorView.setText(bookDetails[2]);
         viewBook_isbnView.setText(bookDetails[3]);
-        String price = "Rs."+bookDetails[4]+".00";
-        viewBook_priceView.setText(bookDetails[4].equals("") ?"":price);
+        String price = "Rs." + bookDetails[4] + ".00";
+        viewBook_priceView.setText(bookDetails[4].equals("") ? "" : price);
         viewBook_categoryView.setText(bookDetails[5]);
         String availability = bookDetails[6];
-        viewBook_availabilityView.setText(availability.equals("1") ?"Available":"borrowed by "+ dbHelper.getBorrowedUserByBookID(bookID));
-        viewBook_availabilityView.setTextColor(availability.equals("1")?getResources().getColor(R.color.colorAccentDark):getResources().getColor(R.color.colorError));
+        viewBook_availabilityView.setText(availability.equals("1") ? "Available" : "borrowed by " + dbHelper.getBorrowedUserByBookID(bookID));
+        viewBook_availabilityView.setTextColor(availability.equals("1") ? getResources().getColor(R.color.colorAccentDark) : getResources().getColor(R.color.colorError));
         bookDetails_EditLayout.setVisibility(View.GONE);
         bookDetails_ViewLayout.setVisibility(View.VISIBLE);
-        main_addBookPopup.show();
+        main_bookDetailsPopup.show();
+    }
+
+    public void showEditBookPopup(int id, String[] bookDetails) {
+        addBook_closeButton.setOnClickListener(v2 -> {
+            addBook_codeText.setText("");
+            addBook_authorView.setText("");
+            addBook_isbnText.setText("");
+            addBook_titleText.setText("");
+            addBook_priceText.setText("");
+            main_bookDetailsPopup.dismiss();
+        });
+        addBook_okButton.setOnClickListener(v2 -> editBookEntry(id, bookDetails));
+        addBook_codeText.setText(bookDetails[0]);
+        addBook_titleText.setText(bookDetails[1]);
+        addBook_authorView.setText(bookDetails[2]);
+        addBook_isbnText.setText(bookDetails[3]);
+        addBook_priceText.setText(bookDetails[4]);
+        addBook_categorySpinner.setSelection(categoryAdapter.getPosition(bookDetails[5]));
+        bookDetails_ViewLayout.setVisibility(View.GONE);
+        bookDetails_EditLayout.setVisibility(View.VISIBLE);
+        main_bookDetailsPopup.show();
+    }
+
+    public void showAddUserPopup() {
+        addUser_closeButton.setOnClickListener(v2 -> main_userDetailsPopup.dismiss());
+        addUser_okButton.setOnClickListener(v2 -> addUserToDatabase());
+        userDetails_ViewLayout.setVisibility(View.GONE);
+        userDetails_EditLayout.setVisibility(View.VISIBLE);
+        main_userDetailsPopup.show();
+    }
+
+    public void showViewUserPopup(int userID) {
+        addUser_closeButton.setOnClickListener(v2 -> main_userDetailsPopup.dismiss());
+        String[] userDetails = dbHelper.getUserDetailsByID(userID);
+        viewUser_editButton.setOnClickListener(view -> showEditUserPopup(userID, userDetails));
+        viewUser_deleteButton.setOnClickListener(v2 -> {
+            dbHelper.deleteUserEntry(userID);
+            main_userDetailsPopup.dismiss();
+            updateTabs();
+        });
+        viewUser_nameView.setText(userDetails[0]);
+        viewUser_telephoneView.setText(userDetails[1]);
+        ArrayList<String[]> borrows = dbHelper.getBorrowedBooksByUserID(userID);
+        int bookCount = borrows.size();
+        String countText = bookCount + " Books";
+        viewUser_countView.setText(countText);
+
+        ArrayList<String[]> borrowedBooks = new ArrayList<>();
+        for (String[] s : borrows) {
+            if (!s[2].equals("1")) {
+                borrowedBooks.add(new String[]{s[0], dbHelper.getBookTitleByID(Integer.parseInt(s[0])), s[1].substring(0, 10), s[3]});
+            }
+        }
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        viewUser_bookList.setLayoutManager(layoutManager);
+        acceptAdapter = new AcceptBookViewAdapter(this, borrowedBooks, dbHelper, String.valueOf(userID));
+        viewUser_bookList.setAdapter(acceptAdapter);
+
+        userDetails_EditLayout.setVisibility(View.GONE);
+        userDetails_ViewLayout.setVisibility(View.VISIBLE);
+        main_userDetailsPopup.show();
+    }
+
+    public void showEditUserPopup(int id, String[] userDetails) {
+        addUser_closeButton.setOnClickListener(v2 -> {
+            addUser_nameText.setText("");
+            addUser_phoneText.setText("");
+            main_userDetailsPopup.dismiss();
+        });
+        addUser_okButton.setOnClickListener(v2 -> editUserEntry(id, userDetails));
+        addUser_nameText.setText(userDetails[0]);
+        addUser_phoneText.setText(userDetails[1]);
+        userDetails_ViewLayout.setVisibility(View.GONE);
+        userDetails_EditLayout.setVisibility(View.VISIBLE);
+        main_userDetailsPopup.show();
     }
 
     public void showAddReceiptPopup() {
@@ -225,19 +324,21 @@ public class StorageActivity extends AppCompatActivity {
     }
 
     private void addBookToDatabase() {
-        String id = addBook_idText.getText().toString();
+        String code = addBook_codeText.getText().toString().trim();
         String name = addBook_titleText.getText().toString().trim();
         String isbn = addBook_isbnText.getText().toString().trim();
         String price = addBook_priceText.getText().toString().trim();
         String author = addBook_authorView.getText().toString().trim();
         String category = addBook_categorySpinner.getSelectedItem().toString();
 
-        if (name.equals("") || author.equals("") || id.equals("") || isbn.equals("")) {
+        if (name.equals("") || author.equals("") || code.equals("") || isbn.equals("")) {
             Toast.makeText(getApplicationContext(), "Error - All fields should be filled", Toast.LENGTH_SHORT).show();
         } else if (dbHelper.getBookIDByTitle(name) > 0) {
             Toast.makeText(getApplicationContext(), "Error - Book is already in the database", Toast.LENGTH_SHORT).show();
+        } else if (dbHelper.getBookIDByCode(code) > 0) {
+            Toast.makeText(getApplicationContext(), "Error - Code is already used in the database", Toast.LENGTH_SHORT).show();
         } else {
-            boolean success = dbHelper.insertRowBook(Integer.parseInt(id), name, author, isbn, price, category);
+            boolean success = dbHelper.insertRowBook(code, name, author, isbn, price, category);
             if (success) {
                 if (!authorsList.contains(author)) {
                     authorsList.add(author);
@@ -251,13 +352,116 @@ public class StorageActivity extends AppCompatActivity {
 
                 booksFragment.dataSetUpdate();
 
-                addBook_idText.setText("");
+                addBook_codeText.setText("");
                 addBook_authorView.setText("");
                 addBook_isbnText.setText("");
                 addBook_titleText.setText("");
                 addBook_priceText.setText("");
             } else {
                 Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void editBookEntry(int bookID, String[] bookDetails) {
+        String code = addBook_codeText.getText().toString().trim();
+        String name = addBook_titleText.getText().toString().trim();
+        String isbn = addBook_isbnText.getText().toString().trim();
+        String price = addBook_priceText.getText().toString().trim();
+        String author = addBook_authorView.getText().toString().trim();
+        String category = addBook_categorySpinner.getSelectedItem().toString();
+
+        if (name.equals("") || author.equals("") || code.equals("") || isbn.equals("")) {
+            Toast.makeText(getApplicationContext(), "Error - All fields should be filled", Toast.LENGTH_SHORT).show();
+        } else if (dbHelper.getBookIDByTitle(name) != bookID && dbHelper.getBookIDByTitle(name) != 0) {
+            Toast.makeText(getApplicationContext(), "Error - Book is already in the database", Toast.LENGTH_SHORT).show();
+        } else if (dbHelper.getBookIDByCode(code) != bookID && dbHelper.getBookIDByCode(code) != 0) {
+            Toast.makeText(getApplicationContext(), "Error - Code is already used in the database", Toast.LENGTH_SHORT).show();
+        } else {
+            ArrayList<String[]> keysValues = new ArrayList<>();
+            if (!code.equals(bookDetails[0])) {
+                keysValues.add(new String[]{"Code", code});
+            }
+            if (!name.equals(bookDetails[1])) {
+                keysValues.add(new String[]{"Title", name});
+            }
+            if (!author.equals(bookDetails[2])) {
+                keysValues.add(new String[]{"Author", author});
+            }
+            if (!isbn.equals(bookDetails[3])) {
+                keysValues.add(new String[]{"ISBN", isbn});
+            }
+            if (!price.equals(bookDetails[4])) {
+                keysValues.add(new String[]{"Price", price});
+            }
+            if (!category.equals(bookDetails[5])) {
+                keysValues.add(new String[]{"Category", category});
+            }
+            if (keysValues.size() > 0) {
+                boolean success = dbHelper.updateBookEntry(bookID, keysValues);
+                if (success) {
+                    if (!authorsList.contains(author)) {
+                        authorsList.add(author);
+                        setAuthorAdapter();
+                    }
+                    if (!bookList.contains(name)) {
+                        bookList.add(name);
+                        setBookAdapter();
+                    }
+                    Toast.makeText(getApplicationContext(), "Edited Successfully", Toast.LENGTH_SHORT).show();
+
+                    booksFragment.dataSetUpdate();
+                    usersFragment.dataSetUpdate();
+
+                    addBook_codeText.setText("");
+                    addBook_authorView.setText("");
+                    addBook_isbnText.setText("");
+                    addBook_titleText.setText("");
+                    addBook_priceText.setText("");
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "No changes made", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void editUserEntry(int userID, String[] userDetails) {
+        String name = addUser_nameText.getText().toString().trim();
+        String telephone = addUser_phoneText.getText().toString().trim();
+
+        if (name.equals("") || telephone.equals("")) {
+            Toast.makeText(getApplicationContext(), "Error - All fields should be filled", Toast.LENGTH_SHORT).show();
+        } else if (dbHelper.getBookIDByTitle(name) != userID && dbHelper.getBookIDByTitle(name) != 0) {
+            Toast.makeText(getApplicationContext(), "Error - Name is already in the database", Toast.LENGTH_SHORT).show();
+        } else {
+            ArrayList<String[]> keysValues = new ArrayList<>();
+            if (!name.equals(userDetails[0])) {
+                keysValues.add(new String[]{"Name", name});
+            }
+            if (!telephone.equals(userDetails[1])) {
+                keysValues.add(new String[]{"Telephone", telephone});
+            }
+            if (keysValues.size() > 0) {
+                boolean success = dbHelper.updateUserEntry(userID, keysValues);
+                if (success) {
+                    if (!userList.contains(name)) {
+                        userList.add(name);
+                        setUserAdapter();
+                    }
+                    Toast.makeText(getApplicationContext(), "Edited Successfully", Toast.LENGTH_SHORT).show();
+
+                    booksFragment.dataSetUpdate();
+                    usersFragment.dataSetUpdate();
+
+                    addUser_nameText.setText("");
+                    addUser_phoneText.setText("");
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error - Unsuccessful", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "No changes made", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -309,9 +513,11 @@ public class StorageActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Error - " + title + " is not available", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "addReceiptToDatabase: " + ID + " " + userID);
-                    boolean success = dbHelper.insertRowReceipt(ID, userID, 4345);
+                    boolean success = dbHelper.insertRowReceipt(ID, userID);
                     boolean success2 = dbHelper.updateBookAvailability(ID, false);
                     if (success && success2) {
+                        booksFragment.dataSetUpdate();
+                        usersFragment.dataSetUpdate();
                         addReceipt_userView.setText("");
                         addReceipt_bookView.setText("");
                         for (int i = 0; i < addReceipt_addBookLayout.getChildCount(); i++) {
@@ -326,6 +532,11 @@ public class StorageActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void updateTabs() {
+        usersFragment.dataSetUpdate();
+        booksFragment.dataSetUpdate();
     }
 
     public void onBookRemove(View v) {

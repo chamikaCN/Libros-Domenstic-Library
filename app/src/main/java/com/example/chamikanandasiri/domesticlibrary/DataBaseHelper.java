@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,26 +26,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table " + TABLE_BOOK + " (BookID INTEGER Primary key , TimeStamp TEXT, Title TEXT UNIQUE, Author TEXT, ISBN TEXT UNIQUE, Price TEXT, Category TEXT, Availability INTEGER)");
+        sqLiteDatabase.execSQL("create table " + TABLE_BOOK + " (BookID INTEGER Primary key AutoIncrement, TimeStamp TEXT, Code TEXT UNIQUE, Title TEXT UNIQUE, Author TEXT, ISBN TEXT UNIQUE, Price TEXT, Category TEXT, Availability INTEGER)");
         sqLiteDatabase.execSQL("create table " + TABLE_USER + " (UserID INTEGER Primary key AutoIncrement , TimeStamp TEXT, Name TEXT UNIQUE, Telephone TEXT, Status INTEGER)");
-        sqLiteDatabase.execSQL("create table " + TABLE_RECEIPT + " (ReceiptID INTEGER, TimeStamp TEXT, BookID INTEGER, UserID INTEGER, Completed INTEGER)");
+        sqLiteDatabase.execSQL("create table " + TABLE_RECEIPT + " (ReceiptID INTEGER Primary key AutoIncrement, TimeStamp TEXT, BookID INTEGER, UserID INTEGER, Completed INTEGER)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOK);
-        sqLiteDatabase.execSQL("DROP tABLE IF EXISTS " + TABLE_USER);
-        sqLiteDatabase.execSQL("DROP tABLE IF EXISTS " + TABLE_RECEIPT);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_RECEIPT);
         onCreate(sqLiteDatabase);
     }
 
     //====================  BOOK TABLE  ==============
 
-    public boolean insertRowBook(int bookID, String title, String author, String isbn, String price, String category) {
+    public boolean insertRowBook(String bookCode, String title, String author, String isbn, String price, String category) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("TimeStamp", addTimeStamp());
-        cv.put("BookID", bookID);
+        cv.put("Code", bookCode);
         cv.put("Title", title);
         cv.put("Author", author);
         cv.put("ISBN", isbn);
@@ -61,6 +62,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put("Availability", available ? 1 : 0);
         long result = db.update(TABLE_BOOK, cv, "BookID = ?", new String[]{String.valueOf(id)});
         return result != -1;
+    }
+
+    public boolean updateBookEntry(int id, ArrayList<String[]> keys) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        for (int i = 0; i < keys.size(); i++) {
+            cv.put(keys.get(i)[0], keys.get(i)[1]);
+            Log.d(TAG, "updateBookEntry: "+keys.get(i)[0]);
+        }
+        long result = db.update(TABLE_BOOK, cv, "BookID = ?", new String[]{String.valueOf(id)});
+        return result != -1;
+    }
+
+    public boolean deleteBookEntry(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_BOOK,"BookID = ?",new String[]{String.valueOf(id)});
+        boolean res2 = deleteEntryByBookID(id);
+        return (result != -1) && res2;
     }
 
     public ArrayList<String> getAllAuthors() {
@@ -89,14 +108,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<String[]> getAllBookDetails() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "Availability"}, null, null, null, null, "TimeStamp DESC", null);
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID", "Code", "Title", "Author", "Availability"}, null, null, null, null, "TimeStamp DESC", null);
         ArrayList<String[]> booksAuthors = new ArrayList<>();
         while (res.moveToNext()) {
             String a = res.getString(0);
             String b = res.getString(1);
             String c = res.getString(2);
             String d = res.getString(3);
-            booksAuthors.add(new String[]{a, b, c, d});
+            String e = res.getString(4);
+            booksAuthors.add(new String[]{a, b, c, d, e});
         }
         res.close();
         return booksAuthors;
@@ -105,6 +125,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public int getBookIDByTitle(String title) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID"}, "Title = ?", new String[]{title}, null, null, null, null);
+        int id = 0;
+        while (res.moveToNext()) {
+            id = res.getInt(0);
+        }
+        res.close();
+        return id;
+    }
+
+    public int getBookIDByCode(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID"}, "Code = ?", new String[]{code}, null, null, null, null);
         int id = 0;
         while (res.moveToNext()) {
             id = res.getInt(0);
@@ -126,7 +157,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public String[] getBookDetailsByID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor resTitle = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "ISBN", "Price", "Category", "Availability"}, "BookID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+        Cursor resTitle = db.query(true, TABLE_BOOK, new String[]{"Code", "Title", "Author", "ISBN", "Price", "Category", "Availability"}, "BookID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
         String[] details = new String[]{};
         while (resTitle.moveToNext()) {
             String a = resTitle.getString(0);
@@ -155,14 +186,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<String[]> getSimilarBookDetails(String searchInput) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor resTitle = db.query(true, TABLE_BOOK, new String[]{"BookID", "Title", "Author", "Availability"}, "Title LIKE ? OR Author LIKE ? OR BookID LIKE ?", new String[]{"%" + searchInput + "%", "%" + searchInput + "%", "%" + searchInput + "%"}, null, null, "TimeStamp DESC", null);
+        Cursor resTitle = db.query(true, TABLE_BOOK, new String[]{"BookID", "Code", "Title", "Author", "Availability"}, "Title LIKE ? OR Author LIKE ? OR Code LIKE ?", new String[]{"%" + searchInput + "%", "%" + searchInput + "%", "%" + searchInput + "%"}, null, null, "TimeStamp DESC", null);
         ArrayList<String[]> details = new ArrayList<>();
         while (resTitle.moveToNext()) {
             String a = resTitle.getString(0);
             String b = resTitle.getString(1);
             String c = resTitle.getString(2);
             String d = resTitle.getString(3);
-            details.add(new String[]{a, b, c, d});
+            String e = resTitle.getString(4);
+            details.add(new String[]{a, b, c, d, e});
         }
         resTitle.close();
         return details;
@@ -179,6 +211,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put("Status", 1);
         long result = db.insert(TABLE_USER, null, cv);
         return result != -1;
+    }
+
+    public boolean updateUserEntry(int id, ArrayList<String[]> keys) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        for (int i = 0; i < keys.size(); i++) {
+            cv.put(keys.get(i)[0], keys.get(i)[1]);
+        }
+        long result = db.update(TABLE_USER, cv, "UserID = ?", new String[]{String.valueOf(id)});
+        return result != -1;
+    }
+
+    public boolean deleteUserEntry(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_USER,"UserID = ?",new String[]{String.valueOf(id)});
+        boolean res2 = deleteEntryByUserID(id);
+        return (result != -1) && res2;
     }
 
     public ArrayList<String> getAllUsers() {
@@ -202,6 +251,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String b = res.getString(1);
             String c = res.getString(2);
             users.add(new String[]{a, b, c});
+        }
+        res.close();
+        return users;
+    }
+
+    public String[] getUserDetailsByID(int userID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_USER, new String[]{"Name", "Telephone"}, " UserID = ?", new String[]{String.valueOf(userID)}, null, null, null, null);
+        String[] users = new String[]{};
+        while (res.moveToNext()) {
+            String a = res.getString(0);
+            String b = res.getString(1);
+            users = new String[]{a, b};
         }
         res.close();
         return users;
@@ -234,10 +296,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //=========================  TABLE RECEIPT ==============================
 
-    public boolean insertRowReceipt(int bookID, int userID, int receiptID) {
+    public boolean insertRowReceipt(int bookID, int userID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("ReceiptID", receiptID);
         cv.put("TimeStamp", addTimeStamp());
         cv.put("BookID", bookID);
         cv.put("UserID", userID);
@@ -246,24 +307,43 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    public boolean updateReceiptCompletion(String BookID, String UserID, String date) {
+    public boolean updateReceiptCompletion(String ReceiptID, String BookID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("Completed", 1);
-        long result = db.update(TABLE_RECEIPT, cv, "BookID = ? AND UserID = ? AND TimeStamp = ?", new String[]{BookID, UserID, date});
+        long result = db.update(TABLE_RECEIPT, cv, "ReceiptID = ?", new String[]{ReceiptID});
         boolean success = updateBookAvailability(Integer.parseInt(BookID), true);
         return (result != -1) && success;
     }
 
+    public boolean deleteEntryByBookID(int bookID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_RECEIPT,"BookID = ?",new String[]{String.valueOf(bookID)});
+        boolean suc = updateBookAvailability(bookID,true);
+        return (result != -1) && suc;
+    }
+
+    public boolean deleteEntryByUserID(int userID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String[]> s = getBorrowedBooksByUserID(userID);
+        boolean suc = true;
+        for (String[] m : s) {
+            suc = suc && updateBookAvailability(Integer.parseInt(m[0]),true);
+        }
+        long result = db.delete(TABLE_RECEIPT,"UserID = ?",new String[]{String.valueOf(userID)});
+        return (result != -1) && suc;
+    }
+
     public ArrayList<String[]> getBorrowedBooksByUserID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.query(true, TABLE_RECEIPT, new String[]{"BookID", "TimeStamp", "Completed"}, "UserID = ?", new String[]{String.valueOf(id)}, null, null, "TimeStamp", null);
+        Cursor res = db.query(true, TABLE_RECEIPT, new String[]{"BookID", "TimeStamp", "Completed","ReceiptID"}, "UserID = ?", new String[]{String.valueOf(id)}, null, null, "TimeStamp", null);
         ArrayList<String[]> borrowedBooks = new ArrayList<>();
         while (res.moveToNext()) {
             String a = res.getString(0);
             String b = res.getString(1);
             String c = res.getString(2);
-            borrowedBooks.add(new String[]{a, b, c});
+            String d = res.getString(3);
+            borrowedBooks.add(new String[]{a, b, c, d});
         }
         res.close();
         return borrowedBooks;

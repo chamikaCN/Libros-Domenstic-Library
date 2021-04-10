@@ -3,11 +3,10 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/txvBookReceiptCardBook"
     style="?android:attr/dropDownItemStyle"
-    android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+    android:textSize="12sp"
     android:singleLine="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAlignment="center"
     android:padding="3dp"
     android:ellipsize="marquee" />
 

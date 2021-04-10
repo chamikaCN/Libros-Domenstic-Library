@@ -7,11 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,11 +24,8 @@ public class UsersFragment extends Fragment {
 
     private DataBaseHelper dataBaseHelper;
     private View view;
-    private TextView completeReceipt_userView, completeReceipt_telephoneView;
-    private ListView Users_listView, completeReceipt_listView;
     private EditText Users_searchText;
-    private ImageButton Users_searchButton,Users_resetButton;
-    private Button completeReceipt_closeButton, completeReceipt_okButton;
+    private ImageButton Users_searchButton, Users_resetButton;
     private Dialog Users_completeReceiptPopoup;
     private ArrayList<String[]> userDetails;
     private RecyclerView Users_recyclerView;
@@ -69,7 +63,6 @@ public class UsersFragment extends Fragment {
         dataBaseHelper = new DataBaseHelper(getActivity());
         Users_completeReceiptPopoup = new Dialog(Objects.requireNonNull(getActivity()));
         Users_completeReceiptPopoup.setContentView(R.layout.popup_completereceipt);
-        //setupCompleteReceiptPopup();
     }
 
     @Override
@@ -82,21 +75,8 @@ public class UsersFragment extends Fragment {
         userDetails.clear();
         userDetails.addAll(dataBaseHelper.getAllUserDetails());
         userViewAdapter.notifyDataSetChanged();
+        userViewAdapter.updateData();
     }
-
-//    public void setupCompleteReceiptPopup(){
-//        completeReceipt_userView = Users_completeReceiptPopoup.findViewById(R.id.txvCompleteReceiptName);
-//        completeReceipt_telephoneView = Users_completeReceiptPopoup.findViewById(R.id.txvCompleteReceiptTelephone);
-//        completeReceipt_listView = Users_completeReceiptPopoup.findViewById(R.id.lstCompleteReceipt);
-//        completeReceipt_closeButton = Users_completeReceiptPopoup.findViewById(R.id.btnCompleteReceiptClose);
-//        completeReceipt_okButton = Users_completeReceiptPopoup.findViewById(R.id.btnCompleteReceiptOK);
-//    }
-//
-//    public void showCompleteReceiptPopup(View v1) {
-//        completeReceipt_closeButton.setOnClickListener(v2 -> Users_completeReceiptPopoup.dismiss());
-//        completeReceipt_okButton.setOnClickListener(v2 -> {});
-//        Users_completeReceiptPopoup.show();
-//    }
 
     public void SearchName(View v1) {
         String q = Users_searchText.getText().toString();
@@ -105,7 +85,7 @@ public class UsersFragment extends Fragment {
             userListGenerate();
             Users_resetButton.setVisibility(View.VISIBLE);
         } else {
-            Toast.makeText(getActivity(),"Search query is not long enough",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Search query is not long enough", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -118,10 +98,7 @@ public class UsersFragment extends Fragment {
         userListGenerate();
     }
 
-
     private void userListGenerate() {
-//        UserArrayAdapter adapter = new UserArrayAdapter(getActivity(), R.layout.listitem_user, userDetails, dataBaseHelper, Users_completeReceiptPopoup);
-//        Users_listView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         Users_recyclerView.setLayoutManager(layoutManager);
         userViewAdapter = new UserViewAdapter(getActivity(), userDetails, dataBaseHelper);

@@ -7,8 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="3dp"
     android:layout_marginTop="6dp"
-    android:layout_marginBottom="6dp"
     android:layout_marginEnd="3dp"
+    android:layout_marginBottom="6dp"
     android:backgroundTint="@color/colorPrimaryLight50"
     app:cardCornerRadius="8dp"
     app:cardElevation="3dp"
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.65" />
 
         <TextView
             android:id="@+id/txvUserCardName"
@@ -66,16 +66,6 @@
             app:layout_constraintTop_toBottomOf="@id/txvUserCardName" />
 
         <Button
-            android:id="@+id/btnUserCardEdit"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/ic_edit"
-            app:layout_constraintEnd_toStartOf="@id/btnUserCardExpand"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
             android:id="@+id/btnUserCardExpand"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -96,14 +86,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txvUserCardTelephone">
 
-            <LinearLayout
-                android:id="@+id/lloUserBooks"
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineV2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintGuide_percent="0.6" />
 
-            </LinearLayout>
+            <TextView
+                android:id="@+id/txvUserCardCurrent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Borrowed"
+                android:textColor="@color/colorAccentDark"
+                android:textSize="15sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/guidelineV2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewCurrentBookList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:clipChildren="true"
+                android:clipToPadding="true"
+                app:layout_constraintEnd_toStartOf="@id/guidelineV2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvUserCardCurrent" />
+
+            <TextView
+                android:id="@+id/txvUserCardPrevious"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Returned"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/guidelineV2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPreviousBookList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:clipChildren="true"
+                android:clipToPadding="true"
+                app:layout_constraintStart_toEndOf="@id/guidelineV2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvUserCardPrevious" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
