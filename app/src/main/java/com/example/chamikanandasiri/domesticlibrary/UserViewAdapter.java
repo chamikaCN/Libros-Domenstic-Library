@@ -74,6 +74,7 @@ public class UserViewAdapter extends RecyclerView.Adapter<UserViewAdapter.ViewHo
         if (bookCount <= 0) {
             holder.userExpandButton.setVisibility(View.GONE);
         } else {
+            holder.userExpandButton.setVisibility(View.VISIBLE);
             holder.userExpandButton.setOnClickListener(view -> {
                 if (holder.userExpandableCard.getVisibility() == View.GONE) {
                     holder.userExpandButton.setBackgroundResource(R.drawable.ic_arrow_up);

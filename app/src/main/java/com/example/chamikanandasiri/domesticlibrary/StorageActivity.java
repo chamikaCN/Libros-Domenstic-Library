@@ -1,14 +1,21 @@
 package com.example.chamikanandasiri.domesticlibrary;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -20,9 +27,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -30,6 +42,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -37,14 +50,15 @@ import androidx.viewpager.widget.ViewPager;
 public class StorageActivity extends AppCompatActivity {
 
     private DataBaseHelper dbHelper;
-    private TextView viewBook_titleView, viewBook_authorView, viewBook_codeView, viewBook_isbnView, viewBook_categoryView, viewBook_priceView, viewBook_availabilityView, viewUser_nameView, viewUser_telephoneView, viewUser_countView;
+    private TextView viewBook_titleView, viewBook_authorView, viewBook_codeView, viewBook_isbnView, viewBook_categoryView, viewBook_priceView, viewBook_availabilityView, viewUser_nameView, viewUser_telephoneView, viewUser_countView, stat_bookValue, stat_userValue, stat_borrowedValue;
     private ConstraintLayout bookDetails_ViewLayout, bookDetails_EditLayout, userDetails_ViewLayout, userDetails_EditLayout;
     private FloatingActionButton addBook_fab, addUser_fab, addReceipt_fab;
-    private Button addBook_okButton, addUser_okButton, addReceipt_closeButton, addReceipt_addButton, addReceipt_okButton;
-    private ImageButton addBook_closeButton, addUser_closeButton, viewBook_editButton, viewBook_deleteButton, viewUser_editButton, viewUser_deleteButton;
-    private Dialog main_bookDetailsPopup, main_userDetailsPopup, main_addReceiptPopup;
+    private Button addBook_okButton, addUser_okButton, addReceipt_addButton, addReceipt_okButton, addReceipt_scanButton;
+    private ImageButton addBook_closeButton, addBook_scanButton, addReceipt_closeButton, addUser_closeButton, viewBook_editButton, viewBook_deleteButton, viewUser_editButton, viewUser_deleteButton, barcode_closeButton, stat_closeButton;
+    private Dialog main_bookDetailsPopup, main_userDetailsPopup, main_addReceiptPopup, main_barcodePopup, main_statisticsPopup;
+    private SurfaceView barcode_surfaceView;
     private EditText addBook_titleText, addBook_isbnText, addBook_priceText, addBook_codeText, addUser_nameText, addUser_phoneText;
-    private AutoCompleteTextView addBook_authorView, addReceipt_userView, addReceipt_bookView;
+    private AutoCompleteTextView addBook_authorView, addReceipt_userView;
     private LinearLayout addReceipt_addBookLayout;
     private Spinner addBook_categorySpinner;
     private RecyclerView viewUser_bookList;
@@ -56,6 +70,29 @@ public class StorageActivity extends AppCompatActivity {
     private UsersFragment usersFragment;
     private BooksFragment booksFragment;
     private AcceptBookViewAdapter acceptAdapter;
+    private ArrayAdapter<String> bookAdapter, authorAdapter, userAdapter;
+    private BarcodeDetector barcodeDetector;
+    private CameraSource cameraSource;
+    private ToneGenerator toneGenerator;
+
+    final int RequestCameraPermissionID = 1001;
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case RequestCameraPermissionID: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    try {
+                        cameraSource.start(barcode_surfaceView.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +121,16 @@ public class StorageActivity extends AppCompatActivity {
         Objects.requireNonNull(main_userDetailsPopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
         main_addReceiptPopup = new Dialog(this);
         main_addReceiptPopup.setContentView(R.layout.popup_addreceipt);
+        Objects.requireNonNull(main_addReceiptPopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
+        main_barcodePopup = new Dialog(this);
+        main_barcodePopup.setContentView(R.layout.popup_barcode);
+        Objects.requireNonNull(main_barcodePopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
+        main_statisticsPopup = new Dialog(this);
+        main_statisticsPopup.setContentView(R.layout.popup_statistics);
+        Objects.requireNonNull(main_statisticsPopup.getWindow()).setBackgroundDrawableResource(R.color.colorTransparent);
+
+        barcodeDetector = new BarcodeDetector.Builder(getApplicationContext()).build();
+        toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
         addBook_fab = findViewById(R.id.fabAddBook);
         addUser_fab = findViewById(R.id.fabAddUser);
@@ -95,7 +142,6 @@ public class StorageActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -105,13 +151,14 @@ public class StorageActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
         setupAddBookPopup();
         setupAddUserPopup();
         setupAddReceiptPopup();
+        setupBarcodePopup();
+        setupStatisticsPopup();
     }
 
     public void setBookFragment(BooksFragment bf) {
@@ -128,6 +175,7 @@ public class StorageActivity extends AppCompatActivity {
         addBook_authorView = main_bookDetailsPopup.findViewById(R.id.actBookDetailsAuthor);
         addBook_categorySpinner = main_bookDetailsPopup.findViewById(R.id.spnBookDetailsCategory);
         addBook_closeButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsClose);
+        addBook_scanButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsScan);
         addBook_isbnText = main_bookDetailsPopup.findViewById(R.id.edtBookDetailsISBN);
         addBook_okButton = main_bookDetailsPopup.findViewById(R.id.btnBookDetailsOK);
         addBook_priceText = main_bookDetailsPopup.findViewById(R.id.edtBookDetailsPrice);
@@ -146,7 +194,7 @@ public class StorageActivity extends AppCompatActivity {
                 android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.category_list));
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         addBook_categorySpinner.setAdapter(categoryAdapter);
-        setAuthorAdapter();
+        setAuthorAdapter(addBook_authorView);
     }
 
     private void setupAddUserPopup() {
@@ -166,31 +214,43 @@ public class StorageActivity extends AppCompatActivity {
 
     private void setupAddReceiptPopup() {
         addReceipt_userView = main_addReceiptPopup.findViewById(R.id.actAddReceiptUser);
-        addReceipt_bookView = main_addReceiptPopup.findViewById(R.id.actAddReceiptBook);
         addReceipt_addButton = main_addReceiptPopup.findViewById(R.id.btnAddReceiptAdd);
         addReceipt_closeButton = main_addReceiptPopup.findViewById(R.id.btnAddReceiptClose);
         addReceipt_okButton = main_addReceiptPopup.findViewById(R.id.btnAddReceiptOK);
+        addReceipt_scanButton = main_addReceiptPopup.findViewById(R.id.btnAddReceiptScan);
         addReceipt_addBookLayout = main_addReceiptPopup.findViewById(R.id.lloAddReceiptAddBook);
-        setUserAdapter();
-        setBookAdapter();
+        setUserAdapter(addReceipt_userView);
+        addBookRowToReceiptPopup();
     }
 
-    private void setAuthorAdapter() {
-        ArrayAdapter<String> authorAdapter = new ArrayAdapter<>(this,
+    private void setupBarcodePopup() {
+        barcode_surfaceView = main_barcodePopup.findViewById(R.id.sfvBarcodeSurface);
+        barcode_closeButton = main_barcodePopup.findViewById(R.id.btnBarcodeClose);
+    }
+
+    private void setupStatisticsPopup() {
+        stat_bookValue = main_statisticsPopup.findViewById(R.id.txvStatisticsBookTotalValue);
+        stat_userValue = main_statisticsPopup.findViewById(R.id.txvStatisticsUserTotalValue);
+        stat_borrowedValue = main_statisticsPopup.findViewById(R.id.txvStatisticsBorrowedTotalValue);
+        stat_closeButton = main_statisticsPopup.findViewById(R.id.btnStatisticsClose);
+    }
+
+    private void setAuthorAdapter(AutoCompleteTextView tv) {
+        authorAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, authorsList);
-        addBook_authorView.setAdapter(authorAdapter);
+        tv.setAdapter(authorAdapter);
     }
 
-    private void setBookAdapter() {
-        ArrayAdapter<String> bookAdapter = new ArrayAdapter<>(this,
+    private void setBookAdapter(AutoCompleteTextView tv) {
+        bookAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, bookList);
-        addReceipt_bookView.setAdapter(bookAdapter);
+        tv.setAdapter(bookAdapter);
     }
 
-    private void setUserAdapter() {
-        ArrayAdapter<String> userAdapter = new ArrayAdapter<>(this,
+    private void setUserAdapter(AutoCompleteTextView tv) {
+        userAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, userList);
-        addReceipt_userView.setAdapter(userAdapter);
+        tv.setAdapter(userAdapter);
     }
 
     public void showAddBookPopup() {
@@ -202,6 +262,7 @@ public class StorageActivity extends AppCompatActivity {
             addBook_priceText.setText("");
             main_bookDetailsPopup.dismiss();
         });
+        addBook_scanButton.setOnClickListener(view -> showBarcodePopup());
         addBook_okButton.setOnClickListener(v2 -> addBookToDatabase());
         bookDetails_ViewLayout.setVisibility(View.GONE);
         bookDetails_EditLayout.setVisibility(View.VISIBLE);
@@ -242,6 +303,7 @@ public class StorageActivity extends AppCompatActivity {
             main_bookDetailsPopup.dismiss();
         });
         addBook_okButton.setOnClickListener(v2 -> editBookEntry(id, bookDetails));
+        addBook_scanButton.setOnClickListener(view -> showBarcodePopup());
         addBook_codeText.setText(bookDetails[0]);
         addBook_titleText.setText(bookDetails[1]);
         addBook_authorView.setText(bookDetails[2]);
@@ -251,6 +313,34 @@ public class StorageActivity extends AppCompatActivity {
         bookDetails_ViewLayout.setVisibility(View.GONE);
         bookDetails_EditLayout.setVisibility(View.VISIBLE);
         main_bookDetailsPopup.show();
+    }
+
+    public void showBarcodePopup() {
+        barcode_closeButton.setOnClickListener(view -> main_barcodePopup.dismiss());
+        detectBarcode();
+        if (main_bookDetailsPopup.isShowing()) {
+            barCodeRecognize(addBook_isbnText, true);
+        } else if (main_addReceiptPopup.isShowing()) {
+            int total = addReceipt_addBookLayout.getChildCount();
+            AutoCompleteTextView tv = addReceipt_addBookLayout.getChildAt(total - 1).findViewById(R.id.actAddReceiptBookDuplicate);
+            if (!tv.getText().toString().equals("")) {
+                tv = addBookRowToReceiptPopup();
+            }
+            barCodeRecognize(tv, false);
+        }
+        main_barcodePopup.show();
+    }
+
+    public void showStatisticsPopup() {
+        stat_closeButton.setOnClickListener(v2 -> main_statisticsPopup.dismiss());
+        String books = String.valueOf(dbHelper.getAllBooks().size());
+        String users = String.valueOf(dbHelper.getAllUsers().size());
+        String borrowed = String.valueOf(dbHelper.getAllBorrowedBooks().size());
+        stat_bookValue.setText(books);
+        stat_userValue.setText(users);
+        stat_borrowedValue.setText(borrowed);
+        userDetails_EditLayout.setVisibility(View.VISIBLE);
+        main_statisticsPopup.show();
     }
 
     public void showAddUserPopup() {
@@ -310,17 +400,19 @@ public class StorageActivity extends AppCompatActivity {
 
     public void showAddReceiptPopup() {
         addReceipt_closeButton.setOnClickListener(v2 -> main_addReceiptPopup.dismiss());
-        addReceipt_addButton.setOnClickListener(v2 -> {
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View rowView = inflater.inflate(R.layout.listitem_addreceipt, null);
-            AutoCompleteTextView tv = rowView.findViewById(R.id.actAddReceiptBookDuplicate);
-            ArrayAdapter<String> bookAdapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_dropdown_item_1line, bookList);
-            tv.setAdapter(bookAdapter);
-            addReceipt_addBookLayout.addView(rowView, addReceipt_addBookLayout.getChildCount() - 1);
-        });
+        addReceipt_addButton.setOnClickListener(v2 -> addBookRowToReceiptPopup());
         addReceipt_okButton.setOnClickListener(view -> addReceiptToDatabase());
+        addReceipt_scanButton.setOnClickListener(view -> showBarcodePopup());
         main_addReceiptPopup.show();
+    }
+
+    public AutoCompleteTextView addBookRowToReceiptPopup() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View rowView = inflater.inflate(R.layout.listitem_addreceipt, null);
+        AutoCompleteTextView tv = rowView.findViewById(R.id.actAddReceiptBookDuplicate);
+        setBookAdapter(tv);
+        addReceipt_addBookLayout.addView(rowView, addReceipt_addBookLayout.getChildCount());
+        return tv;
     }
 
     private void addBookToDatabase() {
@@ -342,11 +434,11 @@ public class StorageActivity extends AppCompatActivity {
             if (success) {
                 if (!authorsList.contains(author)) {
                     authorsList.add(author);
-                    setAuthorAdapter();
+                    authorAdapter.notifyDataSetChanged();
                 }
                 if (!bookList.contains(name)) {
                     bookList.add(name);
-                    setBookAdapter();
+                    bookAdapter.notifyDataSetChanged();
                 }
                 Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
 
@@ -402,11 +494,11 @@ public class StorageActivity extends AppCompatActivity {
                 if (success) {
                     if (!authorsList.contains(author)) {
                         authorsList.add(author);
-                        setAuthorAdapter();
+                        authorAdapter.notifyDataSetChanged();
                     }
                     if (!bookList.contains(name)) {
                         bookList.add(name);
-                        setBookAdapter();
+                        bookAdapter.notifyDataSetChanged();
                     }
                     Toast.makeText(getApplicationContext(), "Edited Successfully", Toast.LENGTH_SHORT).show();
 
@@ -448,7 +540,7 @@ public class StorageActivity extends AppCompatActivity {
                 if (success) {
                     if (!userList.contains(name)) {
                         userList.add(name);
-                        setUserAdapter();
+                        userAdapter.notifyDataSetChanged();
                     }
                     Toast.makeText(getApplicationContext(), "Edited Successfully", Toast.LENGTH_SHORT).show();
 
@@ -478,7 +570,7 @@ public class StorageActivity extends AppCompatActivity {
             if (success) {
                 if (!userList.contains(name)) {
                     userList.add(name);
-                    setUserAdapter();
+                    userAdapter.notifyDataSetChanged();
                 }
 
                 usersFragment.dataSetUpdate();
@@ -494,7 +586,6 @@ public class StorageActivity extends AppCompatActivity {
     private void addReceiptToDatabase() {
         String user = addReceipt_userView.getText().toString().trim();
         ArrayList<String> books = new ArrayList<>();
-        books.add(addReceipt_bookView.getText().toString().trim());
         int childCount = addReceipt_addBookLayout.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View v = addReceipt_addBookLayout.getChildAt(i);
@@ -519,11 +610,14 @@ public class StorageActivity extends AppCompatActivity {
                         booksFragment.dataSetUpdate();
                         usersFragment.dataSetUpdate();
                         addReceipt_userView.setText("");
-                        addReceipt_bookView.setText("");
                         for (int i = 0; i < addReceipt_addBookLayout.getChildCount(); i++) {
                             View v = addReceipt_addBookLayout.getChildAt(i);
                             AutoCompleteTextView tv = v.findViewById(R.id.actAddReceiptBookDuplicate);
-                            onBookRemove(tv);
+                            if (i == 0) {
+                                tv.setText("");
+                            } else {
+                                onBookRemove(tv);
+                            }
                         }
                         Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
                     } else {
@@ -534,13 +628,92 @@ public class StorageActivity extends AppCompatActivity {
         }
     }
 
+    private void detectBarcode() {
+
+        cameraSource = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
+                .setFacing(CameraSource.CAMERA_FACING_BACK)
+                .setRequestedPreviewSize(350, 350)
+                .setRequestedFps(2.0f)
+                .setAutoFocusEnabled(true)
+                .build();
+        barcode_surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+
+                try {
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(StorageActivity.this,
+                                new String[]{Manifest.permission.CAMERA}, RequestCameraPermissionID);
+                        return;
+                    }
+                    cameraSource.start(barcode_surfaceView.getHolder());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                cameraSource.stop();
+            }
+        });
+    }
+
+    private void barCodeRecognize(TextView resultView, boolean isInitial) {
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+
+            }
+
+            @Override
+            public void receiveDetections(Detector.Detections<Barcode> detections) {
+                final SparseArray<Barcode> items = detections.getDetectedItems();
+                if (items.size() != 0) {
+                    String barcode = items.valueAt(0).displayValue;
+                    if (barcode.length() == 10 || (barcode.length() == 13 && barcode.substring(0, 3).equals("978"))) {
+                        toneGenerator.startTone(ToneGenerator.TONE_CDMA_PIP, 350);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            if (!isInitial) {
+                                String title = dbHelper.getBookTitleByISBN(barcode);
+                                if (title.equals("Error")) {
+                                    Toast.makeText(getApplicationContext(), "Book Not in Database", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    resultView.setText(title);
+                                }
+                            } else {
+                                resultView.setText(barcode);
+                            }
+                            main_barcodePopup.dismiss();
+                        });
+                    } else {
+                        toneGenerator.startTone(ToneGenerator.TONE_SUP_ERROR, 350);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Toast.makeText(getApplicationContext(), "No ISBN Barcode detected", Toast.LENGTH_SHORT).show();
+                            main_barcodePopup.dismiss();
+                        });
+                    }
+                }
+            }
+        });
+
+    }
+
     public void updateTabs() {
         usersFragment.dataSetUpdate();
         booksFragment.dataSetUpdate();
     }
 
     public void onBookRemove(View v) {
-        addReceipt_addBookLayout.removeView((View) v.getParent());
+        if (addReceipt_addBookLayout.getChildCount() > 1) {
+            addReceipt_addBookLayout.removeView((View) v.getParent());
+        } else {
+            Toast.makeText(this, "Can not remove the last row", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -550,12 +723,11 @@ public class StorageActivity extends AppCompatActivity {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.mnu_Statistics) {
-            showAddBookPopup();
+            showStatisticsPopup();
         } else if (id == R.id.mnu_Settings) {
             showAddUserPopup();
         }
@@ -598,7 +770,6 @@ public class StorageActivity extends AppCompatActivity {
             addReceipt_fab.hide();
         }
     }
-
 
     @Override
     public void onBackPressed() {

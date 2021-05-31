@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewRadius"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:elevation="0dp"
+    tools:context=".StorageActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnStatisticsClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@color/colorError"
+                android:src="@drawable/ic_close_light" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:padding="5dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineV1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.65" />
+            <TextView
+                android:id="@+id/txvStatisticsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:text="Statistics"
+                app:layout_constraintEnd_toStartOf="@id/guidelineV1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txvStatisticsBookTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Total number of books : "
+                app:layout_constraintEnd_toStartOf="@id/guidelineV1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvStatisticsTitle" />
+
+            <TextView
+                android:id="@+id/txvStatisticsBookTotalValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="0"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccentDark"
+                app:layout_constraintStart_toEndOf="@id/guidelineV1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvStatisticsTitle" />
+
+            <TextView
+                android:id="@+id/txvStatisticsUserTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Total number of users : "
+                app:layout_constraintEnd_toStartOf="@id/guidelineV1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvStatisticsBookTotal" />
+
+            <TextView
+                android:id="@+id/txvStatisticsUserTotalValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="0"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccentDark"
+                app:layout_constraintStart_toEndOf="@id/guidelineV1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvStatisticsBookTotal" />
+
+            <TextView
+                android:id="@+id/txvStatisticsBorrowedTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Total number of currently borrowed books : "
+                app:layout_constraintEnd_toStartOf="@id/guidelineV1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvStatisticsUserTotal" />
+
+            <TextView
+                android:id="@+id/txvStatisticsBorrowedTotalValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="0"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccentDark"
+                app:layout_constraintStart_toEndOf="@id/guidelineV1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txvStatisticsUserTotal" />
+
+
+            <!--            <AutoCompleteTextView-->
+            <!--                android:id="@+id/actBookDetailsAuthor"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="55dp"-->
+            <!--                android:layout_marginStart="10dp"-->
+            <!--                android:layout_marginTop="10dp"-->
+            <!--                android:layout_marginEnd="10dp"-->
+            <!--                android:hint="Author"-->
+            <!--                android:inputType="text"-->
+            <!--                app:layout_constraintTop_toBottomOf="@id/edtBookDetailsTitle" />-->
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/lloBookDetails0"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center_horizontal"-->
+            <!--                android:layout_marginStart="10dp"-->
+            <!--                android:layout_marginTop="10dp"-->
+            <!--                android:layout_marginEnd="10dp"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                app:layout_constraintTop_toBottomOf="@id/actBookDetailsAuthor">-->
+
+            <!--                <EditText-->
+            <!--                    android:id="@+id/edtBookDetailsISBN"-->
+            <!--                    android:layout_width="200dp"-->
+            <!--                    android:layout_height="55dp"-->
+            <!--                    android:layout_marginEnd="20dp"-->
+            <!--                    android:hint="ISBN"-->
+            <!--                    android:inputType="number"-->
+            <!--                    android:maxLength="13" />-->
+            <!--                <ImageButton-->
+            <!--                    android:id="@+id/btnBookDetailsScan"-->
+            <!--                    android:layout_width="40dp"-->
+            <!--                    android:layout_height="40dp"-->
+            <!--                    android:layout_gravity="center_vertical"-->
+            <!--                    android:background="@color/colorAccentDark800"-->
+            <!--                    android:src="@drawable/ic_scan" />-->
+
+            <!--            </LinearLayout>-->
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/lloBookDetails1"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center_horizontal"-->
+            <!--                android:layout_marginStart="10dp"-->
+            <!--                android:layout_marginTop="10dp"-->
+            <!--                android:layout_marginEnd="10dp"-->
+            <!--                android:gravity="center_horizontal"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                app:layout_constraintTop_toBottomOf="@id/lloBookDetails0">-->
+
+            <!--                <EditText-->
+            <!--                    android:id="@+id/edtBookDetailsPrice"-->
+            <!--                    android:layout_width="0dp"-->
+            <!--                    android:layout_height="55dp"-->
+            <!--                    android:layout_marginEnd="10dp"-->
+            <!--                    android:layout_weight="0.55"-->
+            <!--                    android:hint="Price(Rs.)"-->
+            <!--                    android:inputType="numberDecimal" />-->
+
+            <!--                <EditText-->
+            <!--                    android:id="@+id/edtBookDetailsCode"-->
+            <!--                    android:layout_width="0dp"-->
+            <!--                    android:layout_height="55dp"-->
+            <!--                    android:layout_marginStart="10dp"-->
+            <!--                    android:layout_weight="0.35"-->
+            <!--                    android:maxLength="4"-->
+            <!--                    android:hint="Code"-->
+            <!--                    android:inputType="number" />-->
+            <!--            </LinearLayout>-->
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/lloBookDetails2"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center_horizontal"-->
+            <!--                android:layout_marginTop="25dp"-->
+            <!--                android:layout_marginBottom="20dp"-->
+            <!--                android:gravity="center_horizontal"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                app:layout_constraintTop_toBottomOf="@id/lloBookDetails1">-->
+
+            <!--                <TextView-->
+            <!--                    android:layout_width="70dp"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:text="Category"-->
+            <!--                    android:textAlignment="center"-->
+            <!--                    android:textSize="14sp" />-->
+
+            <!--                <Spinner-->
+            <!--                    android:id="@+id/spnBookDetailsCategory"-->
+            <!--                    android:layout_width="200dp"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginStart="10dp"-->
+            <!--                    android:padding="5dp"-->
+            <!--                    android:spinnerMode="dropdown" />-->
+            <!--            </LinearLayout>-->
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/lloBookDetails3"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="20dp"-->
+            <!--                android:gravity="center"-->
+            <!--                app:layout_constraintTop_toBottomOf="@id/lloBookDetails2">-->
+
+            <!--                <Button-->
+            <!--                    android:id="@+id/btnBookDetailsOK"-->
+            <!--                    android:layout_width="100dp"-->
+            <!--                    android:layout_height="40dp"-->
+            <!--                    android:text="OK" />-->
+
+            <!--            </LinearLayout>-->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

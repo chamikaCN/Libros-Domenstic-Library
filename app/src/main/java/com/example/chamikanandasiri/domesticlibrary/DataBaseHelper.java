@@ -106,6 +106,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return books;
     }
 
+    public ArrayList<String> getAllBorrowedBooks() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"Title"}, "Availability = ?", new String[]{"0"}, "Title", null, "TimeStamp", null);
+        ArrayList<String> books = new ArrayList<>();
+        while (res.moveToNext()) {
+            String a = res.getString(0);
+            books.add(a);
+        }
+        res.close();
+        return books;
+    }
+
     public ArrayList<String[]> getAllBookDetails() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.query(true, TABLE_BOOK, new String[]{"BookID", "Code", "Title", "Author", "Availability"}, null, null, null, null, "TimeStamp DESC", null);
@@ -147,6 +159,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public String getBookTitleByID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.query(true, TABLE_BOOK, new String[]{"Title"}, "BookID = ?", new String[]{String.valueOf(id)}, null, null, null, null);
+        String book = "Error";
+        while (res.moveToNext()) {
+            book = res.getString(0);
+        }
+        res.close();
+        return book;
+    }
+
+    public String getBookTitleByISBN(String isbn) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.query(true, TABLE_BOOK, new String[]{"Title"}, "ISBN = ?", new String[]{isbn}, null, null, null, null);
         String book = "Error";
         while (res.moveToNext()) {
             book = res.getString(0);
