@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/mnu_Statistics"
-        android:title="Statistics"
-        android:icon="@drawable/ic_statistics"
+        android:id="@+id/mnu_Profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile"
         app:showAsAction="ifRoom|withText" />
 
     <item
@@ -12,6 +13,13 @@
         android:title="Settings"
         android:icon="@drawable/ic_settings"
         app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/mnu_Statistics"
+        android:title="Statistics"
+        android:icon="@drawable/ic_statistics"
+        app:showAsAction="ifRoom|withText" />
+
     <item
         android:id="@+id/mnu_Backup"
         android:title="Backup Database"

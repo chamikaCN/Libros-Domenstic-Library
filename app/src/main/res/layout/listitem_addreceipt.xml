@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:layout_margin="5dp"
+    android:paddingTop="10dp"
     android:gravity="center_horizontal"
     android:orientation="horizontal">
 
@@ -16,12 +16,14 @@
         android:hint="Book"
         android:inputType="text" />
 
-    <Button
-        android:id="@+id/btnAddReceiptBookRemove"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="10dp"
-        android:layout_weight="0.2"
-        android:onClick="onBookRemove" />
+    <ImageButton
+        android:id="@+id/btnBookDetailsScan"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/colorPrimaryLight200"
+        android:src="@drawable/ic_remove"
+        android:onClick="onBookRemove"/>
+
 </LinearLayout>
 

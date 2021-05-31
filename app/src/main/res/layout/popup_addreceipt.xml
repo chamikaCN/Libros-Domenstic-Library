@@ -1,75 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewRadius"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:orientation="vertical"
-    android:padding="25dp">
+    android:elevation="0dp"
+    tools:context=".StorageActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnAddReceiptClose"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="X" />
-
-    </LinearLayout>
-
-    <AutoCompleteTextView
-        android:id="@+id/actAddReceiptUser"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_margin="5dp"
-        android:hint="User"
-        android:inputType="text" />
-
-    <AutoCompleteTextView
-        android:id="@+id/actAddReceiptBook"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_marginEnd="10dp"
-        android:hint="Book"
-        android:inputType="text" />
-
-    <LinearLayout
-        android:id="@+id/lloAddReceiptAddBook"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnAddReceiptClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@color/colorError"
+                android:src="@drawable/ic_close_light" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <AutoCompleteTextView
+                android:id="@+id/actAddReceiptUser"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:hint="User"
+                android:inputType="text" />
+
+            <LinearLayout
+                android:id="@+id/lloAddReceiptAddBook"
+                android:layout_width="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp">
+
+                <Button
+                    android:id="@+id/btnAddReceiptAdd"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="Add" />
+
+                <Button
+                    android:id="@+id/btnAddReceiptScan"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:text="Scan" />
+
+                <Button
+                    android:id="@+id/btnAddReceiptOK"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:text="OK" />
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp">
-
-        <Button
-            android:id="@+id/btnAddReceiptAdd"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="10dp"
-            android:text="Add" />
-
-        <Button
-            android:id="@+id/btnAddReceiptOK"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:text="OK" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

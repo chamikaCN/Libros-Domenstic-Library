@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewRadius"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:elevation="0dp"
+    tools:context=".StorageActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnBarcodeClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@color/colorError"
+                android:src="@drawable/ic_close_light" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Hold The Barcode"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAlignment="center"
+            android:textSize="15sp" />
+
+        <SurfaceView
+            android:layout_gravity="center"
+            android:id="@+id/sfvBarcodeSurface"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="25dp"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+
+
